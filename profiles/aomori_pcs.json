@@ -1,0 +1,512 @@
+{
+  "name": "Aomori Yoneda PCS / 青森米田 PCS監視",
+  "description": "Daily SCADA exports: 001_PCS監視 (20 PCS x 16 channels + 362 status bits), 002_受電監視, 003_出力制御. Headers translated with CSV項目名称.xlsx (3 blocks on one sheet).",
+  "version": 1,
+  "reader": {
+    "encodings": [
+      "utf-8-sig",
+      "cp932",
+      "shift_jis",
+      "utf-16",
+      "euc_jp",
+      "latin-1"
+    ],
+    "delimiters": [
+      ",",
+      "\t",
+      ";"
+    ],
+    "header_row": null,
+    "skip_rows": 0,
+    "sheet": 0,
+    "thousands": ",",
+    "na_values": [
+      "",
+      "-",
+      "--",
+      "N/A",
+      "NA",
+      "null",
+      "NULL",
+      "#N/A",
+      "***"
+    ]
+  },
+  "identity": {
+    "time_column": null,
+    "time_candidates": [
+      "Time[+09:00]",
+      "Time",
+      "日時",
+      "計測日時",
+      "時刻"
+    ],
+    "entity_label": "PCS",
+    "entity_from_filename": "",
+    "entity_column": null,
+    "entity_from_column": "^(PCS\\d+)[_ ]+(.+)$",
+    "strip_entity_in_name": true,
+    "source_from_filename": "^\\d+_([^_]+)_",
+    "alarm_pattern": "^ANN_\\d+$",
+    "date_from_filename": "(\\d{4}[-_]\\d{2}[-_]\\d{2})",
+    "resample": ""
+  },
+  "dictionary": {
+    "path": "",
+    "sheet": 0,
+    "raw_col": "auto",
+    "name_col": "auto",
+    "unit_col": "auto",
+    "note_col": "auto",
+    "kind_col": "auto",
+    "multi_block": true,
+    "shared_markers": [
+      "共通",
+      "common"
+    ],
+    "header_template": "{name}\n[{unit}]",
+    "keep_raw_row": true
+  },
+  "analysis": {
+    "metrics": [
+      "Data10",
+      "Data01",
+      "Data06",
+      "Data04",
+      "Data05",
+      "Data13"
+    ],
+    "make_matrix": true,
+    "make_deviation": true,
+    "deviation_mode": "mean",
+    "deviation_percent": true,
+    "deviation_floor_pct": 2.0,
+    "deviation_floor_abs": 0.0,
+    "make_daily_summary": true,
+    "make_flags": true,
+    "make_alarms": true,
+    "skip_shared_metrics": true,
+    "flag_exclude": [
+      "zero",
+      "blank"
+    ],
+    "zero_counts": true,
+    "round_to": 3,
+    "feature_targets": {
+      "attribution": [
+        "excel",
+        "html"
+      ],
+      "availability": [
+        "excel",
+        "html"
+      ],
+      "efficiency": [
+        "excel",
+        "html"
+      ],
+      "performance": [
+        "excel",
+        "html"
+      ],
+      "findings": [
+        "excel",
+        "html"
+      ],
+      "scatter": [
+        "html"
+      ],
+      "tidy": []
+    },
+    "stable_only": true,
+    "stable_min_irradiance": 0.4,
+    "stable_tolerance_pct": 5.0,
+    "stable_window": 5,
+    "capacity_kw": 0.0
+  },
+  "output": {
+    "suffix": "_cleaned",
+    "write_excel": true,
+    "write_html": true,
+    "write_png": false,
+    "excel_charts": true,
+    "freeze_panes": true,
+    "autofilter": true,
+    "column_width": 14,
+    "max_html_points": 4000,
+    "out_dir": "",
+    "combined_workbook": true,
+    "split_sheets_by_entity": true,
+    "cf_only_selected": false,
+    "max_cf_columns": 120,
+    "html_color_controls": true,
+    "html_extra_channels": 40,
+    "cleaned_scope": "visible",
+    "analysis_scope": "selected",
+    "html_scope": "all",
+    "analysis_max_metrics": 12,
+    "html_extra_points": 1500,
+    "html_worst_n": 6,
+    "html_language": "auto"
+  },
+  "rules": [
+    {
+      "kind": "zero",
+      "enabled": true,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFE6E6E3",
+      "font": "FF6B6B66",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "blank",
+      "enabled": true,
+      "label": "",
+      "scope": "all",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFE2DEF5",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "negative",
+      "enabled": true,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFF8D0D0",
+      "font": "FF9C0006",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "color_scale",
+      "enabled": true,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFF8D0D0",
+      "font": "FF9C0006",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true,
+      "scale_mode": "5color",
+      "scale_bounds": "numbers",
+      "scale_values": [
+        0,
+        200,
+        400,
+        600,
+        750
+      ]
+    },
+    {
+      "kind": "stuck",
+      "enabled": false,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 10,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFFDE2D2",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "outlier_sigma",
+      "enabled": false,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 4.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFFCF0C8",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "threshold",
+      "enabled": true,
+      "label": "故障警報コード ≠ 0 / fault code",
+      "scope": "selected",
+      "columns": [
+        "Data15",
+        "PCS01_Data15"
+      ],
+      "pattern": "",
+      "operator": ">",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFD03B3B",
+      "font": "FFFFFFFF",
+      "bold": true,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "threshold",
+      "enabled": true,
+      "label": "通信異常カウンタ > 0 / comms errors",
+      "scope": "pattern",
+      "columns": [],
+      "pattern": "通信異常",
+      "operator": ">",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFFDE2D2",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "between",
+      "enabled": false,
+      "label": "INV力率 0.001–0.90 / poor power factor",
+      "scope": "selected",
+      "columns": [
+        "Data13"
+      ],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.001,
+      "value2": 0.9,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFFCF0C8",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "outlier_sigma",
+      "enabled": false,
+      "label": "直流電圧 4σ / DC voltage outlier",
+      "scope": "selected",
+      "columns": [
+        "Data04"
+      ],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 4.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFFBDDE8",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "stuck",
+      "enabled": false,
+      "label": "値が30分固着 / stuck 30 min",
+      "scope": "selected",
+      "columns": [
+        "Data01",
+        "Data10",
+        "Data04"
+      ],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 30,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFE2DEF5",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "color_scale",
+      "enabled": true,
+      "label": "出力の大小 / magnitude",
+      "scope": "selected",
+      "columns": [
+        "Data01",
+        "Data10",
+        "Data06"
+      ],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFF8D0D0",
+      "font": "FF9C0006",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true,
+      "scale_mode": "5color",
+      "scale_bounds": "numbers",
+      "scale_values": [
+        0,
+        200,
+        400,
+        600,
+        750
+      ]
+    }
+  ],
+  "columns": {}
+}

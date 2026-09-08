@@ -1,0 +1,50 @@
+DataScope 2.5.0 - PATCH  (apply on top of 2.4.0)
+================================================
+Copy these files over your DataScope folder, keeping the same structure.
+On 2.3.x or earlier, use DataScope_v2.5.0_FULL.zip instead.
+
+  core/html_report.py    the value axis, drag-to-pan, adjustable height
+  core/models.py         version 2.5.0
+  core/session.py        remembers the file order setting
+  ui/widgets.py          the file list: drag to reorder, sort by name
+  ui/main_window.py      the order controls on the Input tab
+  ui/i18n.py, ui/tips.py labels and hover help
+  README.md, build_exe.bat, requirements.txt
+
+1. THE GRAPHS STRETCH IN BOTH DIRECTIONS NOW
+   Time (as in 2.4.0): drag a range, Ctrl/Command or Shift + wheel,
+   + - and , . from the keyboard.
+   Value (new): the 縦 ＋ / 縦 － / ▲ / ▼ buttons, or ALT + MOUSE WHEEL around
+   the pointer, or [ ] and PageUp / PageDown.
+   It is stored as a fraction of each panel's OWN automatic range, so one
+   setting works on every panel whatever its unit - kW, kW/m2 and °C stretch
+   together and none of them needs a second Y axis.
+
+2. SHIFT + DRAG PANS
+   Slides the frame in both directions at once without changing its size - the
+   way to follow a zoomed-in curve along. While the button is down the tables
+   are left alone so it stays responsive; one full redraw lands on release.
+
+3. GRAPH HEIGHT
+   グラフの高さ / Height, a slider from 60% to 250%, next to the zoom buttons.
+   It stretches the drawing area, not the data, and exported images follow.
+
+4. ONE RESET
+   「表示をリセット」(or the 0 key, or a double-click on any graph) puts all
+   three back: time, value and height.
+
+5. THE SOURCE FILE LIST CAN BE ORDERED  (Input tab)
+   * drag a row up or down inside the list
+   * ▲ ▼ move the selected rows (a multiple selection moves together)
+   * 「名前順に並べ替え」sorts by file name with digit runs compared as NUMBERS,
+     so 001_PCS監視_2026-07-13 comes before 2026-08-06 and file2 before file10 -
+     which plain text sorting gets wrong
+   * 「常に名前順」keeps it sorted, including files added or dropped in later.
+     Reordering by hand switches it off, so the tick box never claims an order
+     the list does not have.
+   Dropping files from outside still adds them; a drag that starts inside the
+   list reorders it.  The order is remembered with the session and is the order
+   the files are read and written in.  The analysis groups by the timestamps
+   inside the data, so the order changes no result.
+
+Nothing was removed, and your profiles and session are kept.

@@ -1,0 +1,299 @@
+{
+  "name": "Generic table / 汎用",
+  "description": "Starting point for any other project: no entity pattern, everything auto-detected.",
+  "version": 1,
+  "reader": {
+    "encodings": [
+      "utf-8-sig",
+      "cp932",
+      "shift_jis",
+      "utf-16",
+      "euc_jp",
+      "latin-1"
+    ],
+    "delimiters": [
+      ",",
+      "\t",
+      ";"
+    ],
+    "header_row": null,
+    "skip_rows": 0,
+    "sheet": 0,
+    "thousands": ",",
+    "na_values": [
+      "",
+      "-",
+      "--",
+      "N/A",
+      "NA",
+      "null",
+      "NULL",
+      "#N/A",
+      "***"
+    ]
+  },
+  "identity": {
+    "time_column": null,
+    "time_candidates": [
+      "日時",
+      "日付",
+      "時刻",
+      "計測日時",
+      "収集日時",
+      "年月日",
+      "時間",
+      "timestamp",
+      "time",
+      "datetime",
+      "date"
+    ],
+    "entity_label": "",
+    "entity_from_filename": "",
+    "entity_column": null,
+    "date_from_filename": "(\\d{4}[-_]\\d{2}[-_]\\d{2})",
+    "resample": ""
+  },
+  "dictionary": {
+    "path": "",
+    "sheet": 0,
+    "raw_col": "auto",
+    "name_col": "auto",
+    "unit_col": "auto",
+    "note_col": "auto",
+    "header_template": "{name}\n[{unit}]",
+    "keep_raw_row": true
+  },
+  "analysis": {
+    "metrics": [],
+    "make_matrix": false,
+    "make_deviation": false,
+    "deviation_mode": "mean",
+    "deviation_percent": true,
+    "make_daily_summary": true,
+    "make_flags": true,
+    "flag_exclude": [
+      "zero",
+      "blank"
+    ],
+    "zero_counts": true,
+    "round_to": 3,
+    "feature_targets": {
+      "attribution": [
+        "excel",
+        "html"
+      ],
+      "availability": [
+        "excel",
+        "html"
+      ],
+      "efficiency": [
+        "excel",
+        "html"
+      ],
+      "performance": [
+        "excel",
+        "html"
+      ],
+      "findings": [
+        "excel",
+        "html"
+      ],
+      "scatter": [
+        "html"
+      ],
+      "tidy": []
+    },
+    "stable_only": true,
+    "stable_min_irradiance": 0.4,
+    "stable_tolerance_pct": 5.0,
+    "stable_window": 5,
+    "capacity_kw": 0.0
+  },
+  "output": {
+    "suffix": "_cleaned",
+    "write_excel": true,
+    "write_html": true,
+    "write_png": false,
+    "excel_charts": true,
+    "freeze_panes": true,
+    "autofilter": true,
+    "column_width": 14,
+    "max_html_points": 4000,
+    "out_dir": "",
+    "combined_workbook": true,
+    "cleaned_scope": "visible",
+    "analysis_scope": "selected",
+    "html_scope": "all",
+    "analysis_max_metrics": 12,
+    "html_extra_channels": 40,
+    "html_extra_points": 1500,
+    "html_worst_n": 6,
+    "html_color_controls": true,
+    "html_language": "auto"
+  },
+  "rules": [
+    {
+      "kind": "zero",
+      "enabled": true,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFE6E6E3",
+      "font": "FF6B6B66",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "blank",
+      "enabled": true,
+      "label": "",
+      "scope": "all",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFE2DEF5",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "negative",
+      "enabled": true,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFF8D0D0",
+      "font": "FF9C0006",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "color_scale",
+      "enabled": false,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 0.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFF8D0D0",
+      "font": "FF9C0006",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "stuck",
+      "enabled": false,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 10,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFFDE2D2",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    },
+    {
+      "kind": "outlier_sigma",
+      "enabled": false,
+      "label": "",
+      "scope": "numeric",
+      "columns": [],
+      "pattern": "",
+      "operator": "<",
+      "value": 0.0,
+      "value2": 4.0,
+      "tolerance": 0.0,
+      "percent": false,
+      "rank": 10,
+      "bottom": false,
+      "text": "",
+      "fill": "FFFCF0C8",
+      "font": "FF0B0B0B",
+      "bold": false,
+      "scale_colors": [
+        "FFF8696B",
+        "FFFFEB84",
+        "FF63BE7B"
+      ],
+      "scale_reverse": false,
+      "bar_color": "FF638EC6",
+      "skip_blank": true
+    }
+  ],
+  "columns": {}
+}

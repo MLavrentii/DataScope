@@ -1,0 +1,70 @@
+DataScope 2.4.0 - PATCH  (apply on top of 2.3.x)
+================================================
+Copy these files over your DataScope folder, keeping the same structure.
+If you are on 2.2.0 or earlier, use DataScope_v2.4.0_FULL.zip instead.
+
+  core/html_report.py   zoom, day selection, the packed axis, readout settings,
+                        the new save, two fixes
+  core/models.py        version 2.4.0
+  README.md             documentation
+  build_exe.bat         version string
+  requirements.txt      version string
+
+Everything here works on EVERY graph in the page - the main chart, the panels
+and each extra graph - and survives into a saved copy, including a
+"this graph only" file.  No new settings in the app itself.
+
+1. ZOOM
+   * drag across a graph to zoom into that range (a shaded band follows you)
+   * Ctrl (or Command) or Shift + mouse wheel zooms around the pointer.  Plain
+     wheel still scrolls the page - this report is tall.
+   * double-click goes back to the whole range
+   * buttons above each chart: 拡大＋ 縮小- ◀前へ 次へ▶ 全体表示, with a label
+     saying exactly what is on screen
+   * keyboard: + and - zoom, 0 whole range, , and . step earlier / later
+   Zoom writes the report's own 開始/終了, so the chart, the panels, the extra
+   graphs, the KPI tiles, the matrix and the CSV all narrow together.
+
+2. CHOOSING DAYS - and the days in between are taken OUT
+   The day strip is a set now, not one tab: click to add or drop a day,
+   Shift-click for just that one, 全日 for everything.  Pick 07-13, 08-06 and
+   08-07 and those three are drawn NEXT TO EACH OTHER - no blank weeks between
+   them.  A dashed divider and a date label mark each join, and the lines are
+   broken there so a jump across the gap can never read as a real change over a
+   few minutes.  Days that really are adjacent merge into one block, so 全日 and
+   a single day look exactly as they did before.
+   The strip is above the main chart, above the extra graphs and above the
+   matrix - one selection, not three.
+
+3. THE VALUE READOUT: now yours to set, in the bar above each graph
+   * 値の吹き出し: 常に表示 / Ctrl 押下中のみ / 表示しない.
+     "Ctrl 押下中のみ" leaves the crosshair following the mouse and shows the
+     numbers only while Ctrl (Command) is held; "表示しない" removes the panel
+     but keeps the crosshair and the dots.  The arrow keys always show the
+     numbers unless it is switched off entirely.
+   * 透明度: 0-70%.  The transparency goes on the BACKGROUND, not the box, so
+     the numbers stay at full strength, and the panel blurs what is behind it so
+     they stay readable over dense lines.
+   Both settings are saved into any HTML you write from the page.
+
+4. NEW: 「表示中の日・期間だけ保存」
+   A new HTML holding ONLY the rows on screen - the chosen days, inside the
+   zoom - but every channel, every unit and every card.  Measured: a 6.74 MB
+   three-day report saved down to 3.71 MB for two days, and the 日別サマリー in
+   the copy lists exactly the days it contains.  Days stay choosable inside the
+   new file.
+
+5. FIXED: SOME TIMES WERE NINE HOURS OUT
+   The stacked / side-by-side charts, the extra graphs and their readout
+   formatted timestamps as UTC while the data is local time, so on a Japanese
+   machine those labels showed 09:00 as 00:00.  The single chart was correct,
+   which is why they disagreed with each other.  All of it formats in local
+   time now.
+
+6. FIXED: double-click did nothing
+   Suppressing the default mousedown (to stop text selection while dragging)
+   also suppressed the dblclick.  CSS stops the selection instead.
+
+MIGRATION
+   A view saved by 2.3.x carrying a single day is read back as a one-day
+   selection.  Nothing else changed.

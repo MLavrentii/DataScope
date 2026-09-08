@@ -1,0 +1,34 @@
+DataScope 2.3.0 - PATCH
+=======================
+Copy these files over your existing DataScope folder, keeping the same
+structure.  Nothing else changed, and your profiles and session are kept.
+
+  core/models.py        new "weather" feature + profile migration, v2.3.0
+  core/html_report.py   the graph builder, plant-wide channels, per-graph
+                        export, width-aware legends, two fixed bugs
+  core/pipeline.py      makes the irradiance/temperature channels travel
+  core/diagnostics.py   uses the shared feature registry
+  ui/tips.py            help text for the new toggle
+  README.md             documentation
+  build_exe.bat         version string
+  requirements.txt      version string
+
+WHAT IS NEW
+  * 出力対日射量 (the scatter) is no longer created by default.  In its place the
+    report opens with a normal time graph of 日射量 + 気温 on the SAME time axis
+    as the power chart, so the patterns line up.  The scatter is still a tick
+    box on the 出力 tab if you want it.
+  * A 追加グラフ card in the report: add as many graphs as you need, put any
+    channel on any graph, and export PNG / JPEG / HTML for ONE graph.
+  * 日射量 and 気温 are identical in all 20 PCS blocks (the report verifies it
+    rather than assuming), so each is drawn as ONE line in its own colour and
+    can be dropped onto any graph.  A channel that differs per unit gets a
+    graph of its own; adding a second one creates a new graph and says so.
+  * Fixed: a saved view restored its settings but the control boxes above the
+    chart still showed the defaults.
+  * Fixed: legend items in an exported PNG/JPEG overlapped when the labels were
+    long or Japanese - the columns are now measured.
+
+MIGRATION
+  A profile saved by 2.2.0 or earlier gains the weather graph on first load and
+  the scatter is switched off (the graph replaced it).  Nothing else is touched.

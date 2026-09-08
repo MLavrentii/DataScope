@@ -1,0 +1,40 @@
+DataScope 2.3.1 - PATCH  (apply on top of 2.3.0)
+================================================
+Copy these files over your DataScope folder, keeping the same structure.
+If you are still on 2.2.0 or earlier, use DataScope_v2.3.1_FULL.zip instead.
+
+  core/html_report.py   the floating readout, rebuilt
+  core/models.py        version 2.3.1
+  README.md             documentation
+  build_exe.bat         version string
+  requirements.txt      version string
+
+WHAT IS FIXED  (all of it applies to the main report, to a saved view, and to a
+"this graph only" file - they share one template)
+
+  * THE READOUT LISTED ONLY SIX UNITS.  It now lists EVERY visible unit, split
+    across up to three columns instead of truncated, grouped by channel with the
+    unit in each heading.  Values are always the real measurement, even when the
+    axis is a percentage.  The extra graphs' readout covers every graph at that
+    instant.
+
+  * IT COVERED THE PNG / JPEG / HTML BUTTONS.  The box is now clamped inside the
+    plot area of the chart it is reading, so it can never reach the button row.
+    (It ignores the mouse, so a box over a button looked exactly like a dead
+    button.)
+
+  * IT JUMPED WHEN YOU STARTED USING THE ARROW KEYS.  It now keeps the height
+    the pointer was last at.  Where the list is tall enough to fill the chart it
+    simply stays put.
+
+  * IT WOULD NOT GO AWAY.  Any hover used to count as a "pinned" cursor, so the
+    box stayed after the pointer left the chart.  Now only the arrow keys pin
+    it, Esc releases that, and a hover lets go on the way out.
+
+  * A PRUNED "this graph only" FILE COULD DRAW EVERY UNIT IN ONE COLOUR.  Unit
+    colours now fall back to the first channel that knows the unit, and the
+    export lands on a per-unit channel so the unit chips and the legend describe
+    the lines actually on the picture.
+
+Nothing else changed: no new settings, and your profiles and session are
+untouched.

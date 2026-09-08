@@ -1,0 +1,19 @@
+# DataScope 2.6.0 — runtime requirements
+#
+# Do NOT install this file with "pip install -r" on a machine that already has
+# a working PySide6: it would upgrade it and, without Windows long-path
+# support, the upgrade can fail half way and leave PySide6 broken.
+# Use install_env.bat instead - it installs only what is missing.
+#
+# Core (needed for everything, including --cli mode):
+pandas>=2.0
+numpy>=1.24
+openpyxl>=3.1
+matplotlib>=3.7
+charset-normalizer>=3.0     # encoding sniffing fallback (optional, recommended)
+
+# GUI only (the command line mode runs without it):
+PySide6>=6.5
+
+# Only needed to build the Windows EXE:
+# pyinstaller>=6.0

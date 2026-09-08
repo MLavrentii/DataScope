@@ -1,0 +1,38 @@
+DataScope 2.6.0 - PATCH  (apply on top of 2.5.0)
+================================================
+Copy these files over your DataScope folder, keeping the same structure.
+On 2.4.0 or earlier, use DataScope_v2.6.0_FULL.zip instead.
+
+  core/html_report.py   per-series height, drawing order, keyboard fix
+  core/models.py        version 2.6.0
+  README.md, build_exe.bat, requirements.txt
+
+1. PER-SERIES HEIGHT  (the x box on each chip in a graph's bar)
+   Two channels on one graph can differ by a factor of a hundred - 気温 barely
+   moves next to 日射量.  Set 気温 to x3 and its shape becomes readable.
+   Two things it deliberately does NOT do:
+     * it does not stretch the axis.  That would shrink every other series
+       instead of enlarging the one you asked for, so the axis stays on the real
+       data and the other lines do not move.
+     * it does not multiply from zero.  A channel sitting at 60-100% of its own
+       maximum would just leave the top of the frame.  It amplifies around the
+       series' OWN MEAN, so the line grows in place; anything still off the edge
+       is clipped rather than drawn over the labels.
+   Any multiplier other than 1 is written as "x3" next to the name in the
+   caption, the note, the readout heading and the legend of the exported image.
+   The values in the readout and the CSV are always the real ones, and the
+   setting is keyed by channel so it survives a saved view and a pruned export.
+
+2. DRAWING ORDER  (the ◀ ▶ on each chip)
+   Move a series along the bar to change which line is drawn on top - the
+   rightmost chip is the front one.  Useful when a flat line hides under a
+   bundle of others.
+
+3. FIXED: THE ARROW KEYS STOPPED MOVING THE CURSOR
+   After using the readout dropdown or a slider, that control kept the keyboard
+   focus, so the arrow keys changed ITS value instead of walking the cursor
+   along the chart.  Every control in those bars now hands the keyboard back
+   when it is done, so the arrows always work - including in 常に表示 mode, as
+   before.
+
+Nothing was removed, and your profiles and session are kept.
