@@ -41,6 +41,7 @@ from .wide import (
     guess_alarm_pattern,
     guess_entity_pattern,
     metric_specs,
+    plant_table,
     split_tables,
     suggest_wide_metrics,
 )
@@ -69,6 +70,7 @@ class ScanResult:
     layout: Optional[WideLayout] = None
     layouts: dict[str, WideLayout] = field(default_factory=dict)
     entity_tables: list[LoadedTable] = field(default_factory=list)
+    plant_tables: list[LoadedTable] = field(default_factory=list)
     mspecs: dict[str, ColumnSpec] = field(default_factory=dict)
 
     @property
@@ -104,11 +106,45 @@ class ScanResult:
         return out
 
     @property
+    def plant_keys(self) -> list[str]:
+        """Plant-wide numeric channels: 日射強度2(水平), パネル温度 and friends."""
+        out: list[str] = []
+        for t in self.plant_tables:
+            for c in t.numeric_columns:
+                if c != t.time_column and c not in out:
+                    out.append(c)
+        return out
+
+    @property
     def numeric_keys(self) -> list[str]:
+        """Everything offerable as a channel: the per-unit metrics, then the
+        plant-wide ones.  The plant channels come last so the familiar list
+        does not shift under the user."""
         if self.is_wide:
-            return [m for m in self.layout.metrics
-                    if self.mspecs.get(m) is None or self.mspecs[m].is_numeric]
+            per_unit = [m for m in self.layout.metrics
+                        if self.mspecs.get(m) is None or self.mspecs[m].is_numeric]
+            return per_unit + [c for c in self.plant_keys if c not in per_unit]
         return an.common_numeric_columns(self.tables)
+
+    @property
+    def matrix_tables(self) -> list[LoadedTable]:
+        """What a channel comparison may draw from.
+
+        The plant tables belong here but NOT in :attr:`analysis_tables`: the
+        diagnostics iterate that list per unit, and PLANT is not a unit - it
+        would appear as a twenty-first inverter with no DC side.
+        """
+        return self.analysis_tables + self.plant_tables
+
+    @property
+    def matrix_specs(self) -> dict[str, ColumnSpec]:
+        """Titles and units for those channels - the per-unit specs plus the
+        plant columns' own, so 日射強度2 is named rather than shown as a code."""
+        out = dict(self.analysis_specs)
+        for c in self.plant_keys:
+            if c in self.specs:
+                out[c] = self.specs[c]
+        return out
 
 
 @dataclass
@@ -322,6 +358,9 @@ def scan(
                 res.layout = lay
             if lay.is_wide:
                 res.entity_tables.extend(split_tables(t, lay))
+                pt = plant_table(t, lay)
+                if pt is not None:
+                    res.plant_tables.append(pt)
         if res.layout is not None and res.layout.is_wide:
             res.mspecs = metric_specs(res.layout, res.specs,
                                       profile.identity.strip_entity_in_name)
@@ -406,7 +445,10 @@ def run_job(
 
     aspecs = sr.analysis_specs
     if sr.is_wide:
-        metrics = [m for m in profile.analysis.metrics if m in sr.layout.metrics]
+        # plant-wide channels areselectable too, and they are not in
+        # layout.metrics (they belong to no unit)
+        offerable = set(sr.layout.metrics) | set(sr.plant_keys)
+        metrics = [m for m in profile.analysis.metrics if m in offerable]
         if not metrics:
             metrics = suggest_wide_metrics(sr.layout, sr.mspecs, sr.entity_tables,
                                            profile.analysis.skip_shared_metrics)
@@ -582,17 +624,22 @@ def run_job(
     # that travel with it, so those two have to be there whatever the scope and
     # the cap say.  They are asked for by name, not decoration, so they are
     # added after the cap.
-    html_roles = guess_roles(aspecs, profile.analysis)
+    # The diagnostics only ever see the per-unit tables, so their roles are
+    # resolved over `aspecs`.  The report may also name plant-wide channels, so
+    # its roles are resolved over the wider set - that is how the horizontal
+    # pyranometer reaches the default weather graph.
+    html_roles = guess_roles(sr.matrix_specs, profile.analysis)
     if opts.write_html and profile.analysis.wants("weather", "html"):
-        for role in ("irradiance", "temp"):
+        for role in ("irradiance", "irradiance_h", "temp"):
             key = html_roles.get(role, "")
-            if key and key in aspecs and key not in html_channels:
+            if key and key in sr.matrix_specs and key not in html_channels:
                 html_channels.append(key)
                 out.messages.append(
                     f"HTML report: {role} channel {key} added for the weather graph")
 
     profile.analysis.metrics = analysis_channels
-    result = an.run_analysis(sr.analysis_tables, aspecs, profile.analysis)
+    result = an.run_analysis(sr.analysis_tables, sr.matrix_specs, profile.analysis,
+                             matrix_tables=sr.matrix_tables)
     if all_alarms:
         result.alarms = pd.concat(all_alarms, ignore_index=True)
     out.analysis = result
@@ -713,7 +760,7 @@ def run_job(
             progress(93, f"HTML: extra channel {i}/{len(rest)}")
             try:
                 mr = an.build_matrix(
-                    sr.analysis_tables, c, aspecs.get(c),
+                    sr.matrix_tables, c, sr.matrix_specs.get(c),
                     deviation_mode=profile.analysis.deviation_mode,
                     deviation_percent=False,
                     round_to=profile.analysis.round_to,
@@ -750,8 +797,12 @@ def run_job(
                 sections=opts.html_sections,
                 diagnostics=result.diagnostics,
                 analysis=profile.analysis,
-                roles=(result.diagnostics.roles if result.diagnostics is not None
-                       else html_roles),
+                # the diagnostics' roles win where they exist (they carry the
+                # profile's explicit choices), but they are resolved over the
+                # per-unit specs only - so the plant-wide ones are merged in
+                roles={**html_roles,
+                       **(result.diagnostics.roles if result.diagnostics is not None
+                          else {})},
             )
             write_html_report(target, payload)
             out.outputs.append(target)

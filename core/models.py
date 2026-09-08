@@ -13,7 +13,11 @@ from pathlib import Path
 from typing import Any, Optional
 
 APP_NAME = "DataScope"
-APP_VERSION = "2.6.0"
+# Channels measured once for the whole plant - the second pyranometer, the panel
+# thermometer - have no unit to belong to, so they are carried under one
+# pseudo-entity instead of being copied into all twenty unit tables.
+PLANT_ENTITY = "PLANT"
+APP_VERSION = "2.7.0"
 
 
 # --------------------------------------------------------------------------- #
@@ -349,6 +353,11 @@ def default_feature_targets() -> dict[str, list[str]]:
 ROLE_HINTS = {
     "ac_power":   ("交流電力", "ac power", "ac_power", "有効電力"),
     "dc_power":   ("直流電力", "dc power", "dc_power"),
+    # Two pyranometers: the one on the array plane and the horizontal one.  The
+    # horizontal hints are checked first and its key is then taken out of the
+    # running, because "日射強度2(水平)" also contains "日射" and would
+    # otherwise be a candidate for the tilted role as well.
+    "irradiance_h": ("日射強度2", "水平", "horizontal"),
     "irradiance": ("日射", "irradian", "irradiance", "insolation"),
     "ac_energy":  ("交流電力量", "ac energy", "電力量"),
     "temp":       ("気温", "temperature", "外気温", "モジュール温度"),
@@ -388,6 +397,7 @@ class AnalysisOptions:
     role_ac_power: str = ""
     role_dc_power: str = ""
     role_irradiance: str = ""
+    role_irradiance_h: str = ""
     role_ac_energy: str = ""
     role_temp: str = ""
     # Only compare units under decent, steady light - dawn, dusk and passing

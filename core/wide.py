@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 from .loader import LoadedTable
-from .models import ColumnSpec, IdentityOptions
+from .models import PLANT_ENTITY, ColumnSpec, IdentityOptions
 
 
 @dataclass
@@ -225,6 +225,40 @@ def metric_specs(
             matched=chosen.matched,
         )
     return out
+
+
+def plant_table(table: LoadedTable, layout: WideLayout) -> Optional[LoadedTable]:
+    """The plant-wide columns as one table under :data:`PLANT_ENTITY`.
+
+    ``Opt_Data22`` (日射強度2, the horizontal pyranometer) and ``Opt_Data21``
+    (パネル温度) are measured once for the site, so they are not part of any
+    unit's table and were previously reachable only on the PLANT sheet of the
+    cleaned workbook.  Giving them a table of their own puts them in the
+    channel list next to ③日射量(傾斜) without copying one sensor into twenty
+    columns - and without adding a twenty-first "unit" to the comparison.
+    """
+    if not layout.is_wide or not layout.plant_columns:
+        return None
+    time_col = table.time_column
+    keep = [c for c in layout.plant_columns if c in table.df.columns]
+    if not keep:
+        return None
+    cols = ([time_col] if time_col else []) + keep
+    sub = table.df.loc[:, [c for c in cols if c in table.df.columns]].copy()
+    return LoadedTable(
+        path=table.path,
+        df=sub,
+        time_column=time_col,
+        entity=PLANT_ENTITY,
+        day=table.day,
+        encoding=table.encoding,
+        delimiter=table.delimiter,
+        header_row=table.header_row,
+        unit_row={},
+        numeric_columns=[c for c in keep if c in table.numeric_columns],
+        text_columns=[c for c in keep if c in table.text_columns],
+        notes=[f"plant columns of {table.path.name}"],
+    )
 
 
 def split_tables(table: LoadedTable, layout: WideLayout) -> list[LoadedTable]:

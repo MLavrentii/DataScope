@@ -1,13 +1,13 @@
 @echo off
 REM ===================================================================
 REM  DataScope - Windows EXE build script (PyInstaller)
-REM  Produces:  dist\DataScope_release_v2.6.0\DataScope_release_v2.6.0.exe
+REM  Produces:  dist\DataScope_release_v2.7.0\DataScope_release_v2.7.0.exe
 REM  One-folder build: starts faster and antivirus flags it less often
 REM  than one-file.  Set ONEFILE=1 below for a single .exe instead.
 REM ===================================================================
 setlocal enabledelayedexpansion
 set APPNAME=DataScope
-set VERSION=2.6.0
+set VERSION=2.7.0
 set OUTNAME=%APPNAME%_release_v%VERSION%
 set ONEFILE=0
 

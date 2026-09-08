@@ -305,13 +305,21 @@ def run_analysis(
     tables: list[LoadedTable],
     specs: dict[str, ColumnSpec],
     opts: AnalysisOptions,
+    matrix_tables: Optional[list[LoadedTable]] = None,
 ) -> AnalysisResult:
+    """``matrix_tables`` may be wider than ``tables``.
+
+    A plant-wide channel (the horizontal pyranometer) lives in a table of its
+    own, which belongs in the channel comparison but not in the per-unit
+    summaries - so the daily totals, the zero report and the quality table keep
+    using ``tables``.
+    """
     metrics = [m for m in opts.metrics] or suggest_metrics(tables)
     res = AnalysisResult()
     if opts.make_matrix:
         for m in metrics:
             mr = build_matrix(
-                tables, m, specs.get(m),
+                matrix_tables or tables, m, specs.get(m),
                 deviation_mode=opts.deviation_mode,
                 deviation_percent=opts.deviation_percent,
                 round_to=opts.round_to,

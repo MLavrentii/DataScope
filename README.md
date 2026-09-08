@@ -1,4 +1,4 @@
-# DataScope 2.6.0
+# DataScope 2.7.0
 
 **SCADA / CSV → readable, colour-coded Excel + interactive HTML, per PCS.**
 
@@ -434,6 +434,33 @@ the note under the graph, the tooltip's group heading and the legend of the
 exported image — a line drawn three times too tall and not labelled as such is
 a lie. The values in the readout and the CSV are always the real ones. The
 setting is keyed by channel, so it survives a saved view and a pruned export.
+
+#### Plant-wide channels: both pyranometers, the panel thermometer, the wind
+
+Some sensors belong to the site, not to a unit. They sit in the PCS file but
+outside every `PCS01_…` block, so until 2.7.0 they only reached the PLANT sheet
+of the cleaned workbook and were missing from the channel list entirely:
+
+| key | name | unit |
+|---|---|---|
+| `Opt_Data22` | **日射強度2(水平)** — the horizontal pyranometer | kW/m² |
+| `Opt_Data21` | パネル温度 | ℃ |
+| `Opt_Data32` / `Opt_Data31` | 風速 / 風向 | m/s · ° |
+
+They are now in the 項目 list — in the app's Analysis tab and in the report's
+channel dropdown — and they are treated as plant-wide channels: one line in its
+own colour, droppable onto any graph, never twenty copies of one sensor. They
+are carried under a `PLANT` pseudo-entity rather than being copied into all
+twenty unit tables, and that table is deliberately kept **out** of the
+diagnostics: PLANT is not a twenty-first inverter with no DC side.
+
+So the site now has two irradiance channels and the report knows which is
+which: `③日射量(傾斜)` is what the panels actually see, `日射強度2(水平)` is
+what a forecast or a neighbouring site reports. **The default weather graph
+carries both plus 気温**, because the pair is what tells you about soiling,
+snow, or a sensor that has been knocked out of alignment — on 08-06 they track
+each other at r = 0.998 but differ by ~12 % at midday, which is the tilt
+working as intended rather than a fault.
 
 #### Two kinds of channel, and why it matters
 

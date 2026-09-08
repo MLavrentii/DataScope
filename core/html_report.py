@@ -16,7 +16,8 @@ import numpy as np
 import pandas as pd
 
 from .analysis import AnalysisResult
-from .models import APP_NAME, APP_VERSION, HTML_SECTIONS, Rule, RuleKind
+from .models import (APP_NAME, APP_VERSION, HTML_SECTIONS, PLANT_ENTITY, Rule,
+                     RuleKind)
 from .rules import gradient_style, hex_color
 
 MAX_TABLE_CELLS = 400_000
@@ -70,14 +71,21 @@ def _table_payload(df: Optional[pd.DataFrame], limit_rows: int = 5000) -> Option
 
 
 def _is_shared(df: Optional[pd.DataFrame]) -> bool:
-    """True when every unit reports the identical series.
+    """True when the channel describes the plant rather than a unit.
 
-    Irradiance and ambient temperature are measured once for the plant and
+    Two ways that happens.  ③日射量(傾斜) and ②気温 are measured once and
     copied into all 20 PCS blocks, so twenty identically-coloured lines carry
-    one line's worth of information.  The page draws such a channel once, in
-    its own colour, and lets the reader put it on any graph.
+    one line's worth of information - that is caught by comparing the columns.
+    日射強度2(水平) and パネル温度 are not in any unit's block at all and
+    arrive under the PLANT pseudo-entity - that is caught by the column name.
+    Either way the page draws the channel once, in its own colour, and lets the
+    reader drop it onto any graph.
     """
-    if df is None or df.empty or df.shape[1] < 2:
+    if df is None or df.empty:
+        return False
+    if list(df.columns) == [PLANT_ENTITY]:
+        return True
+    if df.shape[1] < 2:
         return False
     try:
         num = df.apply(pd.to_numeric, errors="coerce")
@@ -150,8 +158,14 @@ def _default_graphs(roles: dict[str, str], analysis: Any,
     out: list[dict[str, Any]] = []
     if analysis is None or not analysis.wants("weather", "html"):
         return out
-    want = [roles.get("irradiance", ""), roles.get("temp", "")]
-    have = [k for k in want if k and k in keys]
+    # both pyranometers when the site has two: the array plane is what the
+    # panels actually see, the horizontal one is what a forecast or a
+    # neighbouring site reports, and the pair tells you about soiling, snow or
+    # a mis-aimed sensor.
+    want = [roles.get("irradiance", ""), roles.get("irradiance_h", ""),
+            roles.get("temp", "")]
+    seen: set[str] = set()
+    have = [k for k in want if k and k in keys and not (k in seen or seen.add(k))]
     if have:
         out.append({"channels": have})
     return out
@@ -853,9 +867,9 @@ const STR = {
                   + "export just that one graph. The time axis, the period and the unit selection are shared with the chart "
                   + "above. On each chip, x sets how tall that series is drawn and ◀ ▶ move it in the drawing order - the "
                   + "rightmost chip is drawn on top."],
-  "n.shared":    ["日射量・気温は全号機で同じ値なので1本の線で描き、どのグラフにも重ねられます。"
+  "n.shared":    ["日射量・日射強度2(水平)・気温・パネル温度などは全体で1つの値なので1本の線で描き、どのグラフにも重ねられます。"
                   + "号機ごとに異なる項目は1グラフに1つだけです（追加すると新しいグラフになります）。",
-                  "Irradiance and temperature are identical for every unit, so each is drawn as one line and can be put on any graph. "
+                  "Irradiance, the horizontal pyranometer, temperature and the panel thermometer are one value for the whole plant, so each is drawn as one line and can be put on any graph. "
                   + "A channel that differs per unit gets a graph of its own - adding a second one creates a new graph."],
   "n.newgraph":  ["号機ごとに異なる項目のため、新しいグラフを作成しました。",
                   "That channel differs per unit, so it went onto a new graph of its own."],

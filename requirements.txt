@@ -1,4 +1,4 @@
-# DataScope 2.6.0 — runtime requirements
+# DataScope 2.7.0 — runtime requirements
 #
 # Do NOT install this file with "pip install -r" on a machine that already has
 # a working PySide6: it would upgrade it and, without Windows long-path

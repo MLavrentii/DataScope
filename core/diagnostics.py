@@ -51,6 +51,7 @@ def guess_roles(specs: dict[str, ColumnSpec],
         "ac_power": getattr(opts, "role_ac_power", "") if opts else "",
         "dc_power": getattr(opts, "role_dc_power", "") if opts else "",
         "irradiance": getattr(opts, "role_irradiance", "") if opts else "",
+        "irradiance_h": getattr(opts, "role_irradiance_h", "") if opts else "",
         "ac_energy": getattr(opts, "role_ac_energy", "") if opts else "",
         "temp": getattr(opts, "role_temp", "") if opts else "",
     }
@@ -66,9 +67,10 @@ def guess_roles(specs: dict[str, ColumnSpec],
         if role in roles:
             continue
         best, best_score = "", 0
+        taken = set(roles.values())
         for key, spec in specs.items():
-            if not spec.is_numeric:
-                continue
+            if not spec.is_numeric or key in taken:
+                continue          # one column cannot be two different roles
             n = score(spec, hints)
             # "交流電力量" also contains "交流電力"; prefer the exact intent
             if role == "ac_power" and "電力量" in f"{spec.name}{spec.raw}":
